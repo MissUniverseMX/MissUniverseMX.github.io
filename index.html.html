@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MISS UNIVERSE</title>
+    <style>
+        body {
+            font-family: 'Cormorant Garamond', serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom, #001f3f, #ffffff);
+            color: #3a3a3a;
+        }
+
+        .header {
+            text-align: center;
+            padding: 20px;
+            background: #001f3f;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            color: #ffd700;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px;
+        }
+
+        select {
+            padding: 10px;
+            margin: 10px;
+            font-size: 1rem;
+            border: 2px solid #001f3f;
+            border-radius: 5px;
+            background-color: #ffffff;
+            color: #001f3f;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 1.2rem;
+            margin: 10px;
+            background-color: #001f3f;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #004d80;
+        }
+
+        iframe {
+            margin-top: 20px;
+            border: none;
+            width: 80%;
+            height: 400px;
+            border-radius: 10px;
+        }
+
+        .results {
+            text-align: center;
+            margin: 20px;
+        }
+
+        .result {
+            padding: 10px;
+            margin: 5px;
+            border-radius: 5px;
+            font-size: 1.3rem;
+            animation: fadeIn 1s ease;
+            background-color: #ffd700;
+            color: #001f3f;
+        }
+
+        .green {
+            background-color: #2ecc71;
+            color: #2d3436;
+        }
+
+        .red {
+            background-color: #f39c12;
+            color: #c23616;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .table-container {
+            width: 80%;
+            margin: 20px auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background-color: #ffffff;
+            font-family: 'Cormorant Garamond', serif;
+        }
+
+        table, th, td {
+            border: 1px solid #d1ccc0;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #001f3f;
+            color: #ffd700;
+        }
+
+        td {
+            color: #001f3f;
+        }
+
+        .top-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .country-box {
+            margin: 5px;
+            padding: 10px;
+            background-color: #ffffff;
+            border: 2px solid #ffd700;
+            border-radius: 5px;
+            text-align: center;
+            width: 160px;
+            font-weight: bold;
+            color: #001f3f;
+        }
+
+        .country-box.green {
+            background-color: #2ecc71;
+            color: #2d3436;
+        }
+
+        .reset-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #d32f2f;
+            color: white;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>MISS UNIVERSE</h1> 
+        <p>Elige un país de los 130 y comienza el certamen ¡BUENA SUERTE!</p>
+        <p>Reproduce algún video de abajo para ambientar el concurso</p>
+    </div>
+    <div class="container" id="main-container">
+        <select id="countries">
+            <!-- Los nombres de los 127 países -->
+            <!-- Los 127 países de Miss Universo 2024 -->
+        </select>
+        <button onclick="startCompetition()">Comenzar Certamen</button>
+        <iframe id="intro-video1" src="https://www.youtube.com/embed/9kh-SeTXZHs?autoplay=1&mute=1" allowfullscreen></iframe>
+        <iframe id="intro-video2" src="https://www.youtube.com/embed/aT9mFeoVKgo?autoplay=1&mute=1" allowfullscreen></iframe>
+      <p>Realizado por: David Díaz</p>
+    </div>
+    <div class="container" id="results-container" style="display: none;"></div>
+    <div class="container" id="control-buttons" style="display: none;">
+        <button onclick="nextStage()">Continuar</button>
+    </div>
+    <div class="table-container" id="table-container" style="display: none;">
+        <h2>Tabla de resultados</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Lugar</th>
+                    <th>País</th>
+                    <th>Calificación</th>
+                </tr>
+            </thead>
+            <tbody id="results-table-body"></tbody>
+        </table>
+        <button class="reset-button" onclick="resetCompetition()">Reiniciar Certamen</button>
+    </div>
+
+    <script>
+        const countries = [
+          'Albania', 'Alemania', 'Angola', 'Argentina', 'Armenia', 'Australia', 'Austria', 
+'Bahamas', 'Bahrein', 'Bangladesh', 'Barbados', 'Bélgica', 'Belice', 'Bolivia',  'Botsuana', 'Brasil', 'Bulgaria', 
+'Camboya', 'Camerún', 'Canadá', 'Chile', 'China', 'Colombia', 'Corea del Sur', 'Costa Rica', 'Croacia', 'Cuba', 'Dinamarca', 'Ecuador', 'Egipto', 'El Salvador', 'Emiratos Árabes Unidos', 'Eritrea','Eslovaquia', 'España', 'Estados Unidos', 'Filipinas', 'Finlandia', 'Francia', 'Ghana', 'Grecia', 'Guatemala', 'Guinea', 'Guinea Ecuatorial', 'Haití', 'Honduras', 'Hungría', 'India', 'Indonesia', 'Irlanda', 'Islandia', 'Islas Cayman', 'Israel', 'Italia', 'Jamaica', 'Japón', 'Kenia', 'Kosovo', 'Laos', 'Malasia', 'Malta', 'Marruecos', 'Mauricio', 'México', 'Mongolia', 'Myanmar', 'Namibia', 'Nepal', 'Nicaragua', 'Nigeria', 'Noruega', 'Nueva Zelanda', 'Países Bajos', 'Pakistán', 'Panamá', 'Paraguay', 'Perú', 'Polonia', 'Portugal', 'Puerto Rico', 'Reino Unido', 'República Checa', 'República Dominicana', 'Rumania', 'Rusia', 'Senegal', 'Serbia', 'Singapur', 'Sri Lanka', 'Sudáfrica', 'Suecia', 'Suiza', 'Tailandia', 'Tanzania', 'Trinidad y Tobago',  'Turquía', 'Ucrania', 'Uruguay', 'Uzbekistán', 'Venezuela', 'Vietnam', 'Zambia', 'Zimbabue'
+
+        ];
+
+        const select = document.getElementById('countries');
+        const mainContainer = document.getElementById('main-container');
+        const resultsContainer = document.getElementById('results-container');
+        const controlButtons = document.getElementById('control-buttons');
+        const tableContainer = document.getElementById('table-container');
+        const resultsTableBody = document.getElementById('results-table-body');
+
+        const priorityCountries = ['México', 'Venezuela', 'Colombia', 'Estados Unidos', 'Tailandia', 'Filipinas', 'Brasil', 'Sudáfrica', 'Puerto Rico','México', ];
+
+        countries.forEach(country => {
+            const option = document.createElement('option');
+            option.value = country;
+            option.textContent = country;
+            select.appendChild(option);
+        });
+
+        let currentTop = 30;
+        let selectedCountries  = [];
+        let userCountry = "";
+        let scores = {};
+
+        // Preguntas aleatorias de Miss Universo
+        const questions = [
+            "¿Si pudieras tener cualquier habilidad, cuál escogerías?",
+            "¿Qué harías si fueras la presidenta de tu país?",
+            "¿Por qué crees que las mujeres deben ocupar puestos de liderazgo?",
+            "¿Qué harías para erradicar la pobreza en el mundo?",
+            "¿Cuál es el cambio que te gustaría ver en el mundo?",
+            "¿Qué significa para ti la belleza interior?",
+            "¿Cómo manejarías la presión y las expectativas durante el certamen?",
+            "¿Qué es lo más importante que has aprendido de tus padres?",
+            "Si pudieras viajar en el tiempo, ¿a qué época irías?",
+            "¿Qué consejo le darías a las futuras generaciones de mujeres?"
+        ];
+        
+          function getRandomCountries(count, pool) {
+            const prioritized = pool.filter(country => priorityCountries.includes(country));
+            const remaining = pool.filter(country => !priorityCountries.includes(country));
+            const shuffled = [...prioritized, ...remaining].sort(() => 0.5 - Math.random());
+            return shuffled.slice(0, count);
+        }
+
+        function assignScores(countries) {
+            countries.forEach((country, index) => {
+                scores[country] = 10 - index / countries.length;
+            });
+        }
+
+        function startCompetition() {
+            userCountry = select.value;
+            alert("¡El certamen comienza ahora!");
+            mainContainer.style.display = 'none';
+            resultsContainer.style.display = 'block';
+            controlButtons.style.display = 'flex';
+
+            selectedCountries = getRandomCountries(30, countries);
+            assignScores(selectedCountries);
+            announceTop("Top 30", selectedCountries);
+        }
+
+        function announceTop(topName, countriesList) {
+            const utterance = new SpeechSynthesisUtterance(`Los países del ${topName} son: `);
+            speechSynthesis.speak(utterance);
+
+            resultsContainer.innerHTML = `<h2>${topName}</h2>`;
+            let countryInTop = false;
+            const topContainer = document.createElement('div');
+            topContainer.classList.add('top-container');
+
+            countriesList.forEach((country, index) => {
+                setTimeout(() => {
+                    const countryBox = document.createElement('div');
+                    countryBox.classList.add('country-box');
+                    countryBox.textContent = country;
+                    if (country === userCountry) {
+                        countryBox.classList.add('green');
+                        countryBox.textContent += " - ¡Clasificaste!";
+                        countryInTop = true;
+                    }
+                    topContainer.appendChild(countryBox);
+                    if ((index + 1) % 5 === 0) {
+                        topContainer.appendChild(document.createElement('br'));
+                    }
+                }, index * 3000);
+
+                setTimeout(() => {
+                    const countryUtterance = new SpeechSynthesisUtterance(country);
+                    speechSynthesis.speak(countryUtterance);
+                }, index * 3000);
+            });
+
+            resultsContainer.appendChild(topContainer);
+
+            setTimeout(() => {
+                if (!countryInTop) {
+                    const div = document.createElement('div');
+                    div.className = 'result red';
+                    div.textContent = "No clasificaste";
+                    resultsContainer.appendChild(div);
+                }
+            }, countriesList.length * 3000);
+
+            setTimeout(() => {
+                const closeUtterance = new SpeechSynthesisUtterance(`Estos fueron los países del ${topName}`);
+                speechSynthesis.speak(closeUtterance);
+            }, countriesList.length * 3000);
+                   
+
+                if (topName === "Top 7" && countryInTop) {
+                // Si el país está en el Top 7, hacer la pregunta aleatoria
+                const randomQuestion = questions[Math.floor(Math.random() * questions.length)];
+                setTimeout(() => {
+                    const questionUtterance = new SpeechSynthesisUtterance(randomQuestion);
+                    speechSynthesis.speak(questionUtterance);
+                }, countriesList.length * 3000);
+            }
+        }
+
+        function nextStage() {
+            switch (currentTop) {
+                case 30:
+                    currentTop = 15;
+                    break;
+                case 15:
+                    currentTop = 7;
+                    break;
+                case 7:
+                    currentTop = 3;
+                    break;
+                case 3:
+                    showFinalResults();
+                    return;
+            }
+            
+            // Seleccionar solo los países del Top anterior
+            selectedCountries = getRandomCountries(currentTop, selectedCountries);
+            announceTop(`Top ${currentTop}`, selectedCountries);
+        }
+
+        function showFinalResults() {
+            resultsContainer.innerHTML = '<h2>Resultados Finales</h2>';
+            const sortedCountries = selectedCountries.slice(0, 3);
+            const winner = sortedCountries[0];
+            const runnerUp1 = sortedCountries[1];
+            const runnerUp2 = sortedCountries[2];
+
+            const finalResults = [
+                { place: "Miss Universe is", country: winner },
+                { place: "Primera Finalista", country: runnerUp1 },
+                { place: "Segunda Finalista", country: runnerUp2 }
+            ];
+
+            const finalResultsDiv = document.createElement('div');
+            finalResults.forEach(result => {
+                const resultDiv = document.createElement('div');
+                resultDiv.classList.add('result', 'green');
+                resultDiv.textContent = `${result.place}: ${result.country}`;
+                finalResultsDiv.appendChild(resultDiv);
+            });
+
+            resultsContainer.appendChild(finalResultsDiv);
+
+            resultsTableBody.innerHTML = "";
+            selectedCountries.forEach((country, index) => {
+                const row = document.createElement('tr');
+                const placeCell = document.createElement('td');
+                const countryCell = document.createElement('td');
+                const scoreCell = document.createElement('td');
+
+                placeCell.textContent = index + 1;
+                countryCell.textContent = country;
+                scoreCell.textContent = scores[country].toFixed(2);
+
+                row.appendChild(placeCell);
+                row.appendChild(countryCell);
+                row.appendChild(scoreCell);
+                resultsTableBody.appendChild(row);
+            });
+
+            tableContainer.style.display = 'block';
+
+            const finalSpeech = new SpeechSynthesisUtterance (`Miss Universe is ${winner}. Felicidades a la nueva miss universe y a todos los participantes.`);
+            speechSynthesis.speak(finalSpeech);
+        }
+
+        function resetCompetition() {
+            location.reload();
+        }
+    </script>
+</body>
+</html>
+
+
